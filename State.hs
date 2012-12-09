@@ -27,10 +27,12 @@ emptyGrid :: Grid
 emptyGrid = 
     Grid [[Nothing | _ <- [1..gameWidth] ] | _ <- [1..gameHeight]]
 
+clear = putStr "\ESC[2J"
 
 -- printState prints a representation of the state on the screen
 printState :: State -> IO ()
-printState (State grid points activePiece) =
+printState (State grid points activePiece) = do
+    clear
     printHelp (rows grid)
 
 printHelp :: [[Maybe Int]] -> IO ()
