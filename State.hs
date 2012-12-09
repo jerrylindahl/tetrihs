@@ -58,3 +58,59 @@ printRow (Nothing:xs) = do
 -- | --X-
 -- | --X-
 -- | -XX-
+
+
+pieceI :: Piece
+pieceI =
+    Piece
+      [ [Nothing,Nothing,Nothing,Nothing,Nothing]
+      , [Nothing,Nothing,Nothing,Nothing,Nothing]
+      , [Nothing,Just 1 ,Just 1 ,Just 1 ,Just 1 ]
+      , [Nothing,Nothing,Nothing,Nothing,Nothing]
+      , [Nothing,Nothing,Nothing,Nothing,Nothing]
+      ]
+
+pieceJ :: Piece
+pieceJ =
+    Piece
+      [ [Just 1 ,Nothing,Nothing]
+      , [Just 1 ,Just 1 ,Just 1 ]
+      , [Nothing,Nothing,Nothing]
+      ]
+
+pieceL :: Piece
+pieceL =
+    Piece
+      [ [Nothing,Nothing,Just 1 ]
+      , [Just 1 ,Just 1 ,Just 1 ]
+      , [Nothing,Nothing,Nothing]
+      ]
+
+pieceO :: Piece
+pieceO =
+    Piece
+      [ [Just 1 ,Just 1 ]
+      , [Just 1 ,Just 1 ]
+      ]
+
+pieceS :: Piece
+pieceS =
+    Piece
+      [ [Nothing,Just 1 ,Just 1 ]
+      , [Just 1 ,Just 1 ,Nothing]
+      ]
+
+pieceT :: Piece
+pieceT =
+    Piece
+      [ [Nothing,Just 1 ,Nothing]
+      , [Just 1 ,Just 1 ,Just 1 ]
+      , [Nothing,Nothing,Nothing ]
+      ]
+
+pieceZ :: Piece
+pieceZ =
+    Piece
+      [ [Just 1 ,Just 1 ,Nothing]
+      , [Nothing,Just 1 ,Just 1 ]
+      ]
