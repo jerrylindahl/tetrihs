@@ -69,6 +69,9 @@ rotate = transpose . reverse
 rotatePiece :: Piece -> Piece
 rotatePiece (Piece p) = Piece $ rotate p
 
+-- Rotating 4 times should get the original thing back
+prop_rotatePiece p = p == (rotatePiece $ rotatePiece $ rotatePiece $ rotatePiece p)
+
 printPiece :: Piece -> IO ()
 printPiece (Piece p) = printHelp p
 
