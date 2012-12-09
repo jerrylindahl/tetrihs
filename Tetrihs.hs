@@ -31,18 +31,21 @@ main = do
     let handleKeyPress key = do
         state <- readIORef stateRef
         newState <- Game.keyPress key state
+        widgetQueueDraw canvas -- FIXME: should invalidate only the part of the canvas that has changed
         writeIORef stateRef newState
 
     let gameLoop = do
         state <- readIORef stateRef
         newState <- Game.tick state
         State.printState newState
+        widgetQueueDraw canvas -- FIXME: should invalidate only the part of the canvas that has changed
         writeIORef stateRef newState
 
     canvas `on` exposeEvent $ do
         drawWin <- eventWindow
         exposeRegion <- eventRegion
         liftIO $ do
+        state <- readIORef stateRef
 
         renderWithDrawable drawWin $ do
             region exposeRegion
@@ -56,7 +59,10 @@ main = do
 
             -- Draw the tetrimino
             -- FIXME: currently just drawing a random piece in a fixed position
-            drawPiece randomPiece (2,2)
+            let maybePiece = getPiece state
+            case maybePiece of
+                Just piece  -> drawPiece piece (getPosition state)
+                _           -> return ()
 
         return True
 

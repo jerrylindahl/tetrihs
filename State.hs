@@ -1,4 +1,4 @@
-module State (State, newState, emptyGrid, printState, setPiece) where
+module State (State, newState, emptyGrid, printState, getPiece, setPiece, move, getPosition) where
 
 import Piece
 
@@ -20,11 +20,19 @@ gameHeight = 10
 
 newState :: State
 newState = 
-    State {grid=emptyGrid, points=0, activePiece=Nothing, position=(0,0)}
+    State {grid=emptyGrid, points=0, activePiece=(Just randomPiece), position=(0,0)}
 
--- FIXME: proper starting position
-setPiece :: State -> Piece -> State
-setPiece (State grid points activePice position) piece = State grid points (Just piece) (5,5)
+getPiece :: State -> Maybe Piece
+getPiece (State grid points piece pos) = piece
+
+setPiece :: State -> Piece -> Pos -> State
+setPiece (State grid points _  _) piece pos = State grid points (Just piece) pos
+
+-- FIXME: check for collisions / allowed moves
+move :: State -> Int -> Int -> State
+move (State grid points activePiece (x,y)) dx dy = State grid points activePiece (x + dx, y + dy)
+
+getPosition (State grid points piece pos) = pos
 
 emptyGrid :: Grid
 emptyGrid = 
