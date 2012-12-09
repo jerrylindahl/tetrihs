@@ -1,4 +1,4 @@
-module Piece (Piece, randomPiece, rotatePieceCW) where
+module Piece (Piece, randomPiece, rotatePieceCW, getCoords) where
 
 import Data.List(transpose)
 
@@ -22,6 +22,10 @@ rotatePieceCW (Piece p) = Piece $ rotateCW p
 
 -- Rotating 4 times should get the original thing back
 prop_rotatePieceCW p = p == (rotatePieceCW $ rotatePieceCW $ rotatePieceCW $ rotatePieceCW p)
+
+-- Get coordinates where somethings needs to be drawn
+getCoords :: Piece -> [Pos]
+getCoords (Piece p) = [ (x,y) | (y,r) <- zip [0..] p, (x,n) <- zip [0..] r, n /= Nothing ]
 
 
 pieceI :: Piece
