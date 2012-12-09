@@ -1,6 +1,6 @@
-module State (State, newState, emptyGrid, printState) where
+module State (State, newState, emptyGrid, printState, setPiece) where
 
-import Data.List(transpose)
+import Piece
 
 data State = State {grid :: Grid
                    , points :: Int
@@ -10,10 +10,6 @@ data State = State {grid :: Grid
 
 data Grid = Grid { rows :: [[Maybe Int]] }
  deriving ( Show, Eq )
-
---4 by 4 grid or 3 by 3
-data Piece = Piece [[Maybe Int]]
- deriving (Show, Eq)
 
 type Pos = (Int,Int)
 
@@ -25,6 +21,10 @@ gameHeight = 10
 newState :: State
 newState = 
     State {grid=emptyGrid, points=0, activePiece=Nothing, position=(0,0)}
+
+-- FIXME: proper starting position
+setPiece :: State -> Piece -> State
+setPiece (State grid points activePice position) piece = State grid points (Just piece) (5,5)
 
 emptyGrid :: Grid
 emptyGrid = 
@@ -53,85 +53,3 @@ printRow (Just x:xs) = do
 printRow (Nothing:xs) = do
     putStr "."
     printRow xs
-
---perhaps
---EX 3x3
--- | -XX
--- | XX-
--- | ---
-
---EX 4x4
--- | --X-
--- | --X-
--- | --X-
--- | -XX-
-
-
--- Rotate 90° to the right
-rotate :: [[a]] -> [[a]]
-rotate = transpose . reverse
-
-rotatePiece :: Piece -> Piece
-rotatePiece (Piece p) = Piece $ rotate p
-
--- Rotating 4 times should get the original thing back
-prop_rotatePiece p = p == (rotatePiece $ rotatePiece $ rotatePiece $ rotatePiece p)
-
-printPiece :: Piece -> IO ()
-printPiece (Piece p) = printHelp p
-
-
-pieceI :: Piece
-pieceI =
-    Piece
-      [ [Nothing,Nothing,Nothing,Nothing,Nothing]
-      , [Nothing,Nothing,Nothing,Nothing,Nothing]
-      , [Nothing,Just 1 ,Just 1 ,Just 1 ,Just 1 ]
-      , [Nothing,Nothing,Nothing,Nothing,Nothing]
-      , [Nothing,Nothing,Nothing,Nothing,Nothing]
-      ]
-
-pieceJ :: Piece
-pieceJ =
-    Piece
-      [ [Just 1 ,Nothing,Nothing]
-      , [Just 1 ,Just 1 ,Just 1 ]
-      , [Nothing,Nothing,Nothing]
-      ]
-
-pieceL :: Piece
-pieceL =
-    Piece
-      [ [Nothing,Nothing,Just 1 ]
-      , [Just 1 ,Just 1 ,Just 1 ]
-      , [Nothing,Nothing,Nothing]
-      ]
-
-pieceO :: Piece
-pieceO =
-    Piece
-      [ [Just 1 ,Just 1 ]
-      , [Just 1 ,Just 1 ]
-      ]
-
-pieceS :: Piece
-pieceS =
-    Piece
-      [ [Nothing,Just 1 ,Just 1 ]
-      , [Just 1 ,Just 1 ,Nothing]
-      ]
-
-pieceT :: Piece
-pieceT =
-    Piece
-      [ [Nothing,Just 1 ,Nothing]
-      , [Just 1 ,Just 1 ,Just 1 ]
-      , [Nothing,Nothing,Nothing ]
-      ]
-
-pieceZ :: Piece
-pieceZ =
-    Piece
-      [ [Just 1 ,Just 1 ,Nothing]
-      , [Nothing,Just 1 ,Just 1 ]
-      ]
