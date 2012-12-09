@@ -41,7 +41,7 @@ printRow :: [Maybe Int] -> IO ()
 printRow [] =
     putStr "\n"
 printRow (Just x:xs) = do
-    print x
+    putStr $ show x
     printRow xs
 printRow (Nothing:xs) = do
     putStr "."
