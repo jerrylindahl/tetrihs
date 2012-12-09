@@ -3,10 +3,10 @@ module Main (main) where
 --Lets keep all the ugly IO stufs in here.
 
 import Test.QuickCheck
+import Data.IORef
 import Graphics.Rendering.Cairo
 import Graphics.UI.Gtk
 import Control.Monad.Trans(liftIO)
-import Control.Concurrent.MVar
 import Game as Game
 import Piece
 import State as State
@@ -18,16 +18,16 @@ canvasHeight = 600
 
 type Pos = (Int,Int)
 
-handleKeyPress key state = do
-    s <- takeMVar state
-    newState <- Game.keyPress key s
-    putMVar state newState
+handleKeyPress key stateRef = do
+    state <- readIORef stateRef
+    newState <- Game.keyPress key state
+    writeIORef stateRef newState
     
-gameLoop state = do
-    s <- takeMVar state
-    a <- Game.tick s
-    State.printState a
-    putMVar state a
+gameLoop stateRef = do
+    state <- readIORef stateRef
+    newState <- Game.tick state
+    State.printState newState
+    writeIORef stateRef newState
 
 main = do
     initGUI
@@ -36,6 +36,8 @@ main = do
 
     canvas <- drawingAreaNew
     canvas `on` sizeRequest $ return (Requisition canvasWidth canvasHeight)
+
+    stateRef <- newIORef State.newState
 
     canvas `on` exposeEvent $ do
         drawWin <- eventWindow
@@ -65,17 +67,12 @@ main = do
     containerAdd window vbox
     widgetShowAll window
     
-    --game state!
-    a<- return State.newState
-    state <- newMVar a
-    
-    
     window `on` keyPressEvent $ tryEvent $ do
         key <- eventKeyName
-        liftIO $ handleKeyPress key state
+        liftIO $ handleKeyPress key stateRef
     
     --timeout value seems to not work?
-    timeoutAdd (gameLoop state >> return True) 1000
+    timeoutAdd (gameLoop stateRef >> return True) 1000
    
     mainGUI
 
