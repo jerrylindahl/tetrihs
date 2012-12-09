@@ -5,6 +5,7 @@ import Data.List(transpose)
 data State = State {grid :: Grid
                    , points :: Int
                    , activePiece :: Maybe Piece
+                   , position :: Pos
                    } deriving (Show, Eq)
 
 data Grid = Grid { rows :: [[Maybe Int]] }
@@ -14,6 +15,8 @@ data Grid = Grid { rows :: [[Maybe Int]] }
 data Piece = Piece [[Maybe Int]]
  deriving (Show, Eq)
 
+type Pos = (Int,Int)
+
 
 gameWidth = 10
 gameHeight = 10
@@ -21,7 +24,7 @@ gameHeight = 10
 
 newState :: State
 newState = 
-    State {grid=emptyGrid, points=0, activePiece=Nothing}
+    State {grid=emptyGrid, points=0, activePiece=Nothing, position=(0,0)}
 
 emptyGrid :: Grid
 emptyGrid = 
@@ -31,7 +34,7 @@ clear = putStr "\ESC[2J"
 
 -- printState prints a representation of the state on the screen
 printState :: State -> IO ()
-printState (State grid points activePiece) = do
+printState (State grid points activePiece position) = do
     clear
     printHelp (rows grid)
 
