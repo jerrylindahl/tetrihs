@@ -1,5 +1,7 @@
 module State (State, newState, emptyGrid, printState) where
 
+import Data.List(transpose)
+
 data State = State {grid :: Grid
                    , points :: Int
                    , activePiece :: Maybe Piece
@@ -58,6 +60,17 @@ printRow (Nothing:xs) = do
 -- | --X-
 -- | --X-
 -- | -XX-
+
+
+-- Rotate 90° to the right
+rotate :: [[a]] -> [[a]]
+rotate = transpose . reverse
+
+rotatePiece :: Piece -> Piece
+rotatePiece (Piece p) = Piece $ rotate p
+
+printPiece :: Piece -> IO ()
+printPiece (Piece p) = printHelp p
 
 
 pieceI :: Piece
