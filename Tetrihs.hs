@@ -18,17 +18,6 @@ canvasHeight = 600
 
 type Pos = (Int,Int)
 
-handleKeyPress key stateRef = do
-    state <- readIORef stateRef
-    newState <- Game.keyPress key state
-    writeIORef stateRef newState
-    
-gameLoop stateRef = do
-    state <- readIORef stateRef
-    newState <- Game.tick state
-    State.printState newState
-    writeIORef stateRef newState
-
 main = do
     initGUI
     window <- windowNew
@@ -38,6 +27,17 @@ main = do
     canvas `on` sizeRequest $ return (Requisition canvasWidth canvasHeight)
 
     stateRef <- newIORef State.newState
+
+    let handleKeyPress key = do
+        state <- readIORef stateRef
+        newState <- Game.keyPress key state
+        writeIORef stateRef newState
+
+    let gameLoop = do
+        state <- readIORef stateRef
+        newState <- Game.tick state
+        State.printState newState
+        writeIORef stateRef newState
 
     canvas `on` exposeEvent $ do
         drawWin <- eventWindow
@@ -69,10 +69,9 @@ main = do
     
     window `on` keyPressEvent $ tryEvent $ do
         key <- eventKeyName
-        liftIO $ handleKeyPress key stateRef
+        liftIO $ handleKeyPress key
     
-    --timeout value seems to not work?
-    timeoutAdd (gameLoop stateRef >> return True) 1000
+    timeoutAdd (gameLoop >> return True) 1000
    
     mainGUI
 
