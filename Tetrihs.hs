@@ -55,6 +55,9 @@ main = do
             paint
             restore
 
+            -- Draw the board
+            drawGrid (grid state)
+
             -- Draw the tetrimino
             -- FIXME: currently just drawing a random piece in a fixed position
             let maybePiece = getPiece state
@@ -78,6 +81,16 @@ main = do
     timeoutAdd (gameLoop >> return True) 1000
    
     mainGUI
+
+
+drawGrid :: Grid -> Render ()
+drawGrid grid = do
+    save
+
+    let coords = getGridCoords grid
+    mapM drawBlock coords
+
+    restore
 
 
 drawPiece :: Piece -> Pos -> Render ()

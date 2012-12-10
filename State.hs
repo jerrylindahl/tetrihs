@@ -1,4 +1,4 @@
-module State (State, Pos, newState, emptyGrid, printState, getPiece, setPiece, move, getPosition) where
+module State (State, Grid, Pos, grid, newState, emptyGrid, printState, getPiece, setPiece, move, getPosition, getGridCoords) where
 
 import Piece
 
@@ -32,6 +32,10 @@ setPiece (State grid points _  _) piece pos = State grid points (Just piece) pos
 move :: State -> Int -> Int -> State
 move (State grid points activePiece (x,y)) dx dy = State grid points activePiece (x + dx, y + dy)
 
+-- Get coordinates where somethings needs to be drawn
+-- FIXME: copy-paste from Piece.hs
+getGridCoords :: Grid -> [Pos]
+getGridCoords (Grid g) = [ (x,y) | (y,r) <- zip [0..] g, (x,n) <- zip [0..] r, n /= Nothing ]
 
 --canPlace example [[Nothing, Nothing, Just 3],[Just 3, Just 3, Nothing],[Just 3,Just 2,Nothing]] (0,0)
 --takes a grid and tries to place Piece at Pos, return if it works
