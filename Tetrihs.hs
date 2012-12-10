@@ -62,7 +62,7 @@ main = do
             -- FIXME: currently just drawing a random piece in a fixed position
             let maybePiece = getPiece state
             case maybePiece of
-                Just piece  -> drawPiece piece (getPosition state)
+                Just piece  -> drawPiece piece (position state)
                 _           -> return ()
 
         return True

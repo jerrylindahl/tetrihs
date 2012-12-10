@@ -1,8 +1,8 @@
-module Piece (Piece, randomPiece, rotatePieceCW, getCoords) where
+module Piece (Piece, piecee, randomPiece, rotatePieceCW, getCoords) where
 
 import Data.List(transpose)
 
-data Piece = Piece [[Maybe Int]]
+data Piece = Piece {piecee :: [[Maybe Int]]}
     deriving (Show, Eq)
 
 type Pos = (Int,Int)
