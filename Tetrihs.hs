@@ -16,8 +16,6 @@ blockSize = 40
 canvasWidth = 300
 canvasHeight = 600
 
-type Pos = (Int,Int)
-
 main = do
     initGUI
     window <- windowNew

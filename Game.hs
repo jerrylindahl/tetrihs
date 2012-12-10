@@ -19,3 +19,5 @@ keyPress :: String -> State -> IO State
 keyPress key state | trace ("keyPress (" ++ show key ++ ", ...)") False = undefined
                    | otherwise = do
     return $ State.setPiece state (rotatePieceCW $ fromJust (State.getPiece state)) (State.getPosition state)
+
+

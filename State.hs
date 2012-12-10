@@ -1,4 +1,4 @@
-module State (State, newState, emptyGrid, printState, getPiece, setPiece, move, getPosition) where
+module State (State, Pos, newState, emptyGrid, printState, getPiece, setPiece, move, getPosition) where
 
 import Piece
 
@@ -32,6 +32,27 @@ setPiece (State grid points _  _) piece pos = State grid points (Just piece) pos
 move :: State -> Int -> Int -> State
 move (State grid points activePiece (x,y)) dx dy = State grid points activePiece (x + dx, y + dy)
 
+
+--canPlace example [[Nothing, Nothing, Just 3],[Just 3, Just 3, Nothing],[Just 3,Just 2,Nothing]] (0,0)
+--takes a grid and tries to place Piece at Pos, return if it works
+canPlace :: Grid -> [[Maybe Int]] -> Pos -> Bool
+canPlace grid p pos = canPlace' p 0
+	where
+		canPlace' [] _ = True
+		canPlace' (r:rs) rowCount = (canPlaceRow grid pos rowCount 0 r) && (canPlace' rs (rowCount+1))
+
+--canPlaceRow example (1,0) 0 0 [Nothing, Just 1, Just 3]
+canPlaceRow :: Grid -> Pos -> Int -> Int -> [Maybe Int] -> Bool
+canPlaceRow _ _ _ _ [] = True
+canPlaceRow (Grid rows) (x,y) rowCount colCount (Nothing:ps)
+	= canPlaceRow (Grid rows) (x,y) rowCount (colCount+1) ps
+canPlaceRow (Grid rows) (x,y) rowCount colCount (p:ps)
+	= rows!!(y+rowCount)!!(x+colCount)==Nothing && canPlaceRow (Grid rows) (x,y) rowCount (colCount+1) ps
+
+gridEmpty :: Grid -> Pos -> Bool
+gridEmpty (Grid rows) (x,y) = rows!!x!!y == Nothing
+
+
 getPosition (State grid points piece pos) = pos
 
 emptyGrid :: Grid
@@ -61,3 +82,19 @@ printRow (Just x:xs) = do
 printRow (Nothing:xs) = do
     putStr "."
     printRow xs
+
+
+--actually a sudoku but works for testing purposes :)
+example :: Grid
+example =
+    Grid
+      [ [Just 3, Just 6, Nothing,Nothing,Just 7, Just 1, Just 2, Nothing,Nothing]
+      , [Nothing,Just 5, Nothing,Nothing,Nothing,Nothing,Just 1, Just 8, Nothing]
+      , [Nothing,Nothing,Just 9, Just 2, Nothing,Just 4, Just 7, Nothing,Nothing]
+      , [Nothing,Nothing,Nothing,Nothing,Just 1, Just 3, Nothing,Just 2, Just 8]
+      , [Just 4, Nothing,Nothing,Just 5, Nothing,Just 2, Nothing,Nothing,Just 9]
+      , [Just 2, Just 7, Nothing,Just 4, Just 6, Nothing,Nothing,Nothing,Nothing]
+      , [Nothing,Nothing,Just 5, Just 3, Nothing,Just 8, Just 9, Nothing,Nothing]
+      , [Nothing,Just 8, Just 3, Nothing,Nothing,Nothing,Nothing,Just 6, Nothing]
+      , [Nothing,Nothing,Just 7, Just 6, Just 9, Nothing,Nothing,Just 4, Just 3]
+      ]
