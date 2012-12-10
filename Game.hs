@@ -18,9 +18,10 @@ keyPress :: String -> State -> IO State
 keyPress key state | trace ("keyPress (" ++ show key ++ ", ...)") False = undefined
                    | otherwise = do
     case key of
-		"Left"  -> return $ State.setPiece state (rotatePieceACW $ fromJust (State.getPiece state)) (State.getPosition state)
-		"Right" -> return $ State.setPiece state (rotatePieceCW $ fromJust (State.getPiece state)) (State.getPosition state)
+		"Up"    -> return $ State.setPiece state (rotatePieceCW $ fromJust (State.getPiece state)) (State.getPosition state)
 		"Down"  -> tick state
+		"Left"  -> return $ State.move state (-1) 0
+		"Right" -> return $ State.move state 1 0
 		_       -> return state
 
 
