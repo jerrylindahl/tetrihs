@@ -18,6 +18,12 @@ tick state = do
 keyPress :: String -> State -> IO State
 keyPress key state | trace ("keyPress (" ++ show key ++ ", ...)") False = undefined
                    | otherwise = do
-    return $ State.setPiece state (rotatePieceCW $ fromJust (State.getPiece state)) (State.getPosition state)
+    if key == "a" then
+		return $ State.setPiece state (rotatePieceCW $ fromJust (State.getPiece state)) (State.getPosition state)
+	else
+		if key == "s" then
+			return $ State.setPiece state (rotatePieceACW $ fromJust (State.getPiece state)) (State.getPosition state)
+		else
+			return state
 
 
