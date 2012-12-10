@@ -13,17 +13,15 @@ tick :: State -> IO State
 tick state = do
     return $ State.move state 0 1
 
--- FIXME: don't replace the Piece on the Board with every keypress
 -- FIXME: this state keeping is messed up
+-- FIXME: this if else is not very functional...
 keyPress :: String -> State -> IO State
 keyPress key state | trace ("keyPress (" ++ show key ++ ", ...)") False = undefined
                    | otherwise = do
-    if key == "a" then
-		return $ State.setPiece state (rotatePieceCW $ fromJust (State.getPiece state)) (State.getPosition state)
-	else
-		if key == "s" then
-			return $ State.setPiece state (rotatePieceACW $ fromJust (State.getPiece state)) (State.getPosition state)
-		else
-			return state
+    case key of
+		"Left"  -> return $ State.setPiece state (rotatePieceACW $ fromJust (State.getPiece state)) (State.getPosition state)
+		"Right" -> return $ State.setPiece state (rotatePieceCW $ fromJust (State.getPiece state)) (State.getPosition state)
+		"Down"  -> undefined
+		_       -> return state
 
 
