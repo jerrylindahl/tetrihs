@@ -20,16 +20,7 @@ tick' board piece (x,y) state = do
 		then return $ State.move state 0 1
 		else return $ pieceDone board (points state) piece (x,y) state
 
---new piece, merge piece with grid
--- <<<<<<< HEAD
---pieceDone :: Grid -> Int -> [[Maybe Int]] -> Pos -> State -> State
---pieceDone g points ap pos state =
-	--createState (makeGrid newnewg) (points+newpoints) (activePiece state) pos
-	--where 
-		--(newpoints, newnewg) = rowReduce (rows newg)
-		--newg = addPieceToGrid ap g --Kalev add the merg thing here
 
--- =======
 pieceDone :: Grid -> Int -> Piece -> Pos -> State -> State
 pieceDone g points ap (x,y) state
     | y == 0    = error "End of game" -- End of the game, crash for now
@@ -45,8 +36,7 @@ rowReduce :: [[Maybe Int]] -> (Int, [[Maybe Int]])
 rowReduce g = (length cRows, ((newRows $ length cRows) ++ [g!!r | r<-[0..(length g)-1], r `notElem` cRows]))
 	where cRows = completeRows g
 
-newRows :: Int -> [[Maybe Int]]
-newRows n = (replicate n (replicate 10 Nothing))
+
 
 --rowReduce' [] p ogs = (p, ogs) --todo add new rows
 --rowReduce' g:gs p ogs = rowReduce' gs ogs:
@@ -78,7 +68,6 @@ dropPiece state
 	| otherwise = dropPiece $ tryMove state 0 1
 	
 
---copy paste, REFACTOR :)
 tryRotate :: State -> State
 tryRotate state = 
 	if canPlace g (rotateCW p) (State.position state)
@@ -87,9 +76,6 @@ tryRotate state =
 	where
 		g = grid state
 		p = piecee $ fromJust (activePiece state)
-		(x,y) = position state
-
-
 
 tryMove :: State -> Int -> Int -> State
 tryMove state dx dy =

@@ -1,4 +1,4 @@
-module State (State, Grid, Pos, points, createState, rows, makeGrid, grid, canPlace, activePiece, addPieceToGrid, position, newState, emptyGrid, printState, getPiece, setPiece, move,  getGridCoords) where
+module State (State, Grid, Pos, newRows, points, createState, rows, makeGrid, grid, canPlace, activePiece, addPieceToGrid, position, newState, emptyGrid, printState, getPiece, setPiece, move,  getGridCoords) where
 
 
 import Piece
@@ -45,36 +45,24 @@ move (State grid points activePiece (x,y)) dx dy = State grid points activePiece
 getGridCoords :: Grid -> [Pos]
 getGridCoords (Grid g) = [ (x,y) | (y,r) <- zip [0..] g, (x,n) <- zip [0..] r, n /= Nothing ]
 
---scanPlacePiece :: Grid -> Piece -> Pos -> Bool
---canPlacePiece grid p pos = canPlace grid (p pos
 
---canPlace example [[Nothing, Nothing, Just 3],[Just 3, Just 3, Nothing],[Just 3,Just 2,Nothing]] (0,0)
 --takes a grid and tries to place Piece at Pos, return if it works
 canPlace :: Grid -> [[Maybe Int]] -> Pos -> Bool
-canPlace grid p pos = insideBorder p pos && canPlace' p 0 
+canPlace grid p pos = canPlace' p 0 
 	where
 		canPlace' [] _ = True
 		canPlace' (r:rs) rowCount = (canPlaceRow grid pos rowCount 0 r) && (canPlace' rs (rowCount+1))
 
-insideBorder :: [[Maybe Int]] -> Pos -> Bool
-insideBorder p (x,y) = True --(length p)+y >= gameHeight
-
---canPlaceRow example (1,0) 0 0 [Nothing, Just 1, Just 3]
 canPlaceRow :: Grid -> Pos -> Int -> Int -> [Maybe Int] -> Bool
 canPlaceRow _ _ _ _ [] = True
 canPlaceRow (Grid rows) (x,y) rowCount colCount (Nothing:ps)
 	= canPlaceRow (Grid rows) (x,y) rowCount (colCount+1) ps
 canPlaceRow (Grid rows) (x,y) rowCount colCount (p:ps) =
 	y+rowCount < gameHeight &&
-	leftEdgeOk p  &&
-	rightEdgeOk p &&
+	x+colCount >= 0  &&
+	x+colCount < gameWidth &&
 	rows!!(y+rowCount)!!(x+colCount)==Nothing && 
 	canPlaceRow (Grid rows) (x,y) rowCount (colCount+1) ps
-	where
-		--check for Piece!!y!!x if not Nothing is it within edges?
-		--no need for pattern matching since we do that in in canPlaceRow
-		leftEdgeOk p  = x+colCount >= 0
-		rightEdgeOk p = x+colCount < gameWidth 
 	
 gridEmpty :: Grid -> Pos -> Bool
 gridEmpty (Grid rows) (x,y) = rows!!x!!y == Nothing
@@ -103,7 +91,10 @@ replaceBlock grid newBlock (x,y)
 
 emptyGrid :: Grid
 emptyGrid = 
-    Grid [[Nothing | _ <- [1..gameWidth] ] | _ <- [1..gameHeight]]
+    Grid (replicate gameHeight (replicate gameWidth Nothing))
+
+newRows :: Int -> [[Maybe Int]]
+newRows n = (replicate n (replicate gameWidth Nothing))
 
 clear = putStr "\ESC[2J"
 
