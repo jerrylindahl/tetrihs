@@ -14,9 +14,7 @@ import State as State
 import Debug.Trace
 import System.Random
 
-blockSize = 40
-canvasWidth = 300
-canvasHeight = 600
+blockSize = 30
 
 main = do
     initGUI
@@ -24,7 +22,7 @@ main = do
     window `on` deleteEvent $ liftIO mainQuit >> return False
 
     canvas <- drawingAreaNew
-    canvas `on` sizeRequest $ return (Requisition canvasWidth canvasHeight)
+    canvas `on` sizeRequest $ return (Requisition (blockSize*10) (blockSize*20))
 
     seed <- newStdGen
     piecesRef <- newIORef $ randomPieces seed
@@ -146,7 +144,7 @@ drawGrid grid = do
 drawPiece :: Piece -> Pos -> Render ()
 drawPiece piece (x,y) = do
     save
-    translate (fromIntegral x * blockSize) (fromIntegral y * blockSize)
+    translate (fromIntegral x * fromIntegral blockSize) (fromIntegral y * fromIntegral blockSize)
 
     let coords = getCoords piece
     mapM drawBlock coords
@@ -159,17 +157,17 @@ drawBlock (x,y) | trace ("drawBlock (" ++ show x ++ "," ++ show y ++ ")") False 
 drawBlock (x,y) | otherwise = do
 --drawBlock (x,y) = do
     save
-    translate (fromIntegral x * blockSize) (fromIntegral y * blockSize)
+    translate (fromIntegral x * fromIntegral blockSize) (fromIntegral y * fromIntegral blockSize)
 
     -- Colour the box
     setSourceRGB 0 0 1 -- blue
-    rectangle 0 0 blockSize blockSize
+    rectangle 0 0 (fromIntegral blockSize) (fromIntegral blockSize)
     fill
 
     -- Black border
     setSourceRGB 0 0 0 -- black
     setLineWidth 3
-    rectangle (0 + 1.5) (0 + 1.5) (blockSize - 3) (blockSize - 3)
+    rectangle (0 + 1.5) (0 + 1.5) (fromIntegral blockSize - 3) (fromIntegral blockSize - 3)
     stroke
 
     -- FIXME: draw shadows so the block looks raised
