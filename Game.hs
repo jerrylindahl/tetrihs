@@ -1,9 +1,9 @@
-module Game (tick, keyPress) where
+module Game (tick, keyPress, completeRows) where
 
 --Only purely functional beyond this point
 
 import Test.QuickCheck
-import Data.Maybe(fromJust)
+import Data.Maybe(fromJust, isJust)
 import Debug.Trace
 import Piece
 import State as State
@@ -23,14 +23,33 @@ tick' board piece (x,y) state = do
 --new piece, merge piece with grid
 pieceDone :: Grid -> Int -> [[Maybe Int]] -> Pos -> State -> State
 pieceDone g points ap pos state =
-	createState newg points (activePiece state) pos
+	createState (makeGrid newnewg) (points+newpoints) (activePiece state) pos
 	where 
-		(newpoints, newnewg) = rowReduce newg
+		(newpoints, newnewg) = rowReduce (rows newg)
 		newg = addPieceToGrid ap g --Kalev add the merg thing here
 
 addPieceToGrid ap g = g
 
-rowReduce g = (1, g)
+--rowReduce g = rowReduce' g 0 []
+rowReduce :: [[Maybe Int]] -> (Int, [[Maybe Int]])
+rowReduce g = (length cRows, ((newRows $ length cRows) ++ [g!!r | r<-[0..(length g)-1], r `notElem` cRows]))
+	where cRows = completeRows g
+
+newRows :: Int -> [[Maybe Int]]
+newRows n = (replicate n (replicate 10 Nothing))
+
+--rowReduce' [] p ogs = (p, ogs) --todo add new rows
+--rowReduce' g:gs p ogs = rowReduce' gs ogs:
+
+--Game.completeRows (rows emptyGrid)
+completeRows :: [[Maybe Int]] -> [Int]
+completeRows g = completeRows' g [] 0
+
+completeRows' :: [[Maybe Int]] -> [Int] -> Int -> [Int]
+completeRows' [] rows i = rows
+completeRows' (g:gs) rows i 
+	| all (isJust) g 	= completeRows' gs (i:rows) (i+1)
+	| otherwise 		= completeRows' gs rows (i+1)
 
 -- FIXME: this state keeping is messed up
 keyPress :: String -> State -> IO State

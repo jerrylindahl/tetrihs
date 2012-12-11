@@ -1,4 +1,4 @@
-module State (State, Grid, Pos, createState, grid, canPlace, activePiece, position, newState, emptyGrid, printState, getPiece, setPiece, move,  getGridCoords) where
+module State (State, Grid, Pos, makeGrid, rows, createState, grid, canPlace, activePiece, position, newState, emptyGrid, printState, getPiece, setPiece, move,  getGridCoords) where
 
 import Piece
 
@@ -21,9 +21,12 @@ createState :: Grid -> Int -> Maybe Piece -> Pos -> State
 createState board p ap pos =
 	State {grid=board, points=p, activePiece=ap, position=pos}
 
+makeGrid :: [[Maybe Int]] -> Grid
+makeGrid g = (Grid g)
+
 newState :: State
 newState = 
-    State {grid=emptyGrid, points=0, activePiece=(Just randomPiece), position=(0,0)}
+    State {grid=emptyGrid, points=0, activePiece=(Just randomPiece), position=(4,0)}
 
 getPiece :: State -> Maybe Piece
 getPiece (State grid points piece pos) = piece
@@ -110,17 +113,17 @@ printRow (Nothing:xs) = do
 example :: Grid
 example =
     Grid
-      [ [Nothing,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
-      , [Nothing,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
-      , [Nothing,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
-      , [Nothing,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
-      , [Nothing,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
-      , [Nothing,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
+      [ [Just 9,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
+      , [Just 9,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
+      , [Just 9,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
+      , [Just 9,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
+      , [Just 9,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
+      , [Just 9,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
       , [Nothing,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Just 3, Nothing, Nothing]
       , [Nothing,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
       , [Nothing,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
       , [Nothing,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
-      , [Nothing,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
+      , [Just 1,Just 1,Just 1, Just 1,Just 1,Just 1,Just 1,Just 1, Just 1, Just 1]
       , [Nothing,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
       , [Nothing,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Just 3]
       , [Nothing,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
