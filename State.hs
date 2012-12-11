@@ -1,4 +1,4 @@
-module State (State, Grid, Pos, createState, rows, makeGrid, grid, canPlace, activePiece, addPieceToGrid, position, newState, emptyGrid, printState, getPiece, setPiece, move,  getGridCoords) where
+module State (State, Grid, Pos, points, createState, rows, makeGrid, grid, canPlace, activePiece, addPieceToGrid, position, newState, emptyGrid, printState, getPiece, setPiece, move,  getGridCoords) where
 
 
 import Piece
@@ -102,8 +102,8 @@ replaceBlock grid newBlock (x,y)
 
 
 emptyGrid :: Grid
-emptyGrid = example
-    --Grid [[Nothing | _ <- [1..gameWidth] ] | _ <- [1..gameHeight]]
+emptyGrid = 
+    Grid [[Nothing | _ <- [1..gameWidth] ] | _ <- [1..gameHeight]]
 
 clear = putStr "\ESC[2J"
 
@@ -111,6 +111,9 @@ clear = putStr "\ESC[2J"
 printState :: State -> IO ()
 printState (State grid points activePiece position) = do
     clear
+    putStrLn "-----"
+    putStrLn ("Points: " ++ (show points))
+    putStrLn "-----"
     printHelp (rows grid)
 
 printHelp :: [[Maybe Int]] -> IO ()
