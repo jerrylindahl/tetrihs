@@ -39,7 +39,7 @@ main = do
         widgetQueueDraw canvas -- FIXME: should invalidate only the part of the canvas that has changed
         writeIORef stateRef newState
 
-    let gameLoop = do
+    let gameLoop time = do
         state <- readIORef stateRef
         newState <- tick state
 
@@ -48,14 +48,15 @@ main = do
                 pieces <- readIORef piecesRef
                 writeIORef stateRef $ State.setPiece newState (head pieces) (4,0)
                 writeIORef piecesRef $ tail pieces
+                timeoutAdd (gameLoop (time-10) >> return False) time
                 return ()
             _           -> do
                 writeIORef stateRef newState
+                timeoutAdd (gameLoop time >> return False) time
                 return ()
 
-        State.printState newState
         widgetQueueDraw canvas -- FIXME: should invalidate only the part of the canvas that has changed
-
+        
     canvas `on` exposeEvent $ do
         drawWin <- eventWindow
         exposeRegion <- eventRegion
@@ -95,7 +96,7 @@ main = do
         key <- eventKeyName
         liftIO $ handleKeyPress key
     
-    timeoutAdd (gameLoop >> return True) 1000
+    timeoutAdd (gameLoop 1000 >> return False) 1000
    
     mainGUI
 
