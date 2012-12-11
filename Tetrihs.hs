@@ -92,10 +92,10 @@ tick' :: Grid -> Piece -> Pos -> State -> IO State
 tick' board piece (x,y) state = do
     if State.canPlace board (piecee piece) (x,(y+1))
         then return $ State.move state 0 1
-        else return $ pieceDone board (points state) piece (x,y) state
+        else return $ pieceDone board (points state) piece (x,y)
 
-pieceDone :: Grid -> Int -> Piece -> Pos -> State -> State
-pieceDone g points ap (x,y) state
+pieceDone :: Grid -> Int -> Piece -> Pos -> State
+pieceDone g points ap (x,y)
     | y == 0    = error "End of game" -- End of the game, crash for now
     | otherwise =
         createState (makeGrid newnewg) (points+newpoints) (Just randomPiece) (4,0)
