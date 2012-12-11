@@ -70,7 +70,13 @@ keyPress key state | trace ("keyPress (" ++ show key ++ ", ...)") False = undefi
 		"Down"  -> tick state
 		"Left"  -> return $ tryMove state (-1) 0
 		"Right" -> return $ tryMove state 1 0
+		"space" -> return $ dropPiece state
 		_       -> return state
+
+dropPiece state
+	| (tryMove state 0 1) == state = state
+	| otherwise = dropPiece $ tryMove state 0 1
+	
 
 --copy paste, REFACTOR :)
 tryRotate :: State -> State
