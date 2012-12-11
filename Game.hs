@@ -12,23 +12,33 @@ import Control.Monad.Trans(liftIO)
 tick :: State -> IO State
 --tick (State.State g p Nothing _) = undefined --wat?
 tick state = do
-	tick' (State.grid state) (piecee (fromJust $ State.activePiece state)) (State.position state) state
+	tick' (State.grid state) (fromJust $ State.activePiece state) (State.position state) state
 	
-tick' :: Grid -> [[Maybe Int]] -> Pos -> State -> IO State
+tick' :: Grid -> Piece -> Pos -> State -> IO State
 tick' board piece (x,y) state = do
-	if State.canPlace board piece (x,(y+1))
+	if State.canPlace board (piecee piece) (x,(y+1))
 		then return $ State.move state 0 1
 		else return $ pieceDone board 0 piece (x,y) state
 
 --new piece, merge piece with grid
-pieceDone :: Grid -> Int -> [[Maybe Int]] -> Pos -> State -> State
-pieceDone g points ap pos state =
-	createState (makeGrid newnewg) (points+newpoints) (activePiece state) pos
+-- <<<<<<< HEAD
+--pieceDone :: Grid -> Int -> [[Maybe Int]] -> Pos -> State -> State
+--pieceDone g points ap pos state =
+	--createState (makeGrid newnewg) (points+newpoints) (activePiece state) pos
+	--where 
+		--(newpoints, newnewg) = rowReduce (rows newg)
+		--newg = addPieceToGrid ap g --Kalev add the merg thing here
+
+-- =======
+pieceDone :: Grid -> Int -> Piece -> Pos -> State -> State
+pieceDone g points ap (x,y) state
+    | y == 0    = error "End of game" -- End of the game, crash for now
+    | otherwise =
+	createState (makeGrid newnewg) points (Just randomPiece) (4,0)
 	where 
 		(newpoints, newnewg) = rowReduce (rows newg)
-		newg = addPieceToGrid ap g --Kalev add the merg thing here
+		newg = addPieceToGrid ap g (x,y)
 
-addPieceToGrid ap g = g
 
 --rowReduce g = rowReduce' g 0 []
 rowReduce :: [[Maybe Int]] -> (Int, [[Maybe Int]])

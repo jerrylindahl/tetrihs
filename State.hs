@@ -1,6 +1,8 @@
-module State (State, Grid, Pos, makeGrid, rows, createState, grid, canPlace, activePiece, position, newState, emptyGrid, printState, getPiece, setPiece, move,  getGridCoords) where
+module State (State, Grid, Pos, createState, rows, makeGrid, grid, canPlace, activePiece, addPieceToGrid, position, newState, emptyGrid, printState, getPiece, setPiece, move,  getGridCoords) where
+
 
 import Piece
+import Debug.Trace
 
 data State = State {grid :: Grid
                    , points :: Int
@@ -78,7 +80,26 @@ gridEmpty :: Grid -> Pos -> Bool
 gridEmpty (Grid rows) (x,y) = rows!!x!!y == Nothing
 
 
---getPosition (State grid points piece pos) = pos
+addPieceToGrid piece (Grid grid) offset =
+        Grid $ replaceMultipleBlocks grid offset (Just 42) coords
+        where
+                coords = getCoords piece
+
+replaceMultipleBlocks grid (x,y) newBlock ((x1,y1):coords)
+    | coords == [] = updatedGrid
+    | otherwise    = replaceMultipleBlocks updatedGrid (x,y) newBlock coords
+        where
+                updatedGrid = replaceBlock grid newBlock (x+x1, y+y1)
+
+replaceBlock grid newBlock (x,y)
+    | trace ("addBlock (..., " ++ show x ++ "," ++ show y ++ ")") False = undefined
+    | otherwise =
+        rowsBefore ++ newRow:rowsAfter
+        where
+                (rowsBefore,row:rowsAfter) = splitAt y grid
+                (blocksBefore,_:blocksAfter) = splitAt x row
+                newRow = blocksBefore ++ newBlock:blocksAfter
+
 
 emptyGrid :: Grid
 emptyGrid = example
