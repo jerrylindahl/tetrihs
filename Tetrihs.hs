@@ -136,7 +136,7 @@ drawGrid grid = do
     save
 
     let coords = getGridCoords grid
-    mapM drawBlock coords
+    mapM (drawBlock (0,0,1)) coords
 
     restore
 
@@ -147,20 +147,20 @@ drawPiece piece (x,y) = do
     translate (fromIntegral x * fromIntegral blockSize) (fromIntegral y * fromIntegral blockSize)
 
     let coords = getCoords piece
-    mapM drawBlock coords
+    mapM (drawBlock $ colourRGB $ colour piece) coords
 
     restore
 
 
-drawBlock :: Pos -> Render ()
-drawBlock (x,y) | trace ("drawBlock (" ++ show x ++ "," ++ show y ++ ")") False = undefined
-drawBlock (x,y) | otherwise = do
---drawBlock (x,y) = do
+drawBlock :: (Double,Double,Double) -> Pos -> Render ()
+drawBlock (r,g,b) (x,y) | trace ("drawBlock (" ++ show x ++ "," ++ show y ++ ")") False = undefined
+drawBlock (r,g,b) (x,y) | otherwise = do
+--drawBlock (r,g,b) (x,y) = do
     save
     translate (fromIntegral x * fromIntegral blockSize) (fromIntegral y * fromIntegral blockSize)
 
     -- Colour the box
-    setSourceRGB 0 0 1 -- blue
+    setSourceRGB r g b
     rectangle 0 0 (fromIntegral blockSize) (fromIntegral blockSize)
     fill
 
