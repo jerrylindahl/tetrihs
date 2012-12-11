@@ -26,9 +26,7 @@ pieceDone g points ap pos state =
 	createState newg points (activePiece state) pos
 	where 
 		(newpoints, newnewg) = rowReduce newg
-		newg = addPieceToGrid ap g --Kalev add the merg thing here
-
-addPieceToGrid ap g = g
+		newg = addPieceToGrid ap g pos
 
 rowReduce g = (1, g)
 
