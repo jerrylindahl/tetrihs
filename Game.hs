@@ -22,11 +22,13 @@ tick' board piece (x,y) state = do
 
 --new piece, merge piece with grid
 pieceDone :: Grid -> Int -> Piece -> Pos -> State -> State
-pieceDone g points ap pos state =
+pieceDone g points ap (x,y) state
+    | y == 0    = error "End of game" -- End of the game, crash for now
+    | otherwise =
 	createState newg points (Just randomPiece) (0,0)
 	where 
 		(newpoints, newnewg) = rowReduce newg
-		newg = addPieceToGrid ap g pos
+		newg = addPieceToGrid ap g (x,y)
 
 rowReduce g = (1, g)
 
