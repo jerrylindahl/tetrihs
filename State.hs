@@ -1,4 +1,4 @@
-module State (State, Grid, Pos, grid, canPlace, activePiece, position, newState, emptyGrid, printState, getPiece, setPiece, move,  getGridCoords) where
+module State (State, Grid, Pos, createState, grid, canPlace, activePiece, position, newState, emptyGrid, printState, getPiece, setPiece, move,  getGridCoords) where
 
 import Piece
 
@@ -17,6 +17,9 @@ type Pos = (Int,Int)
 gameWidth = 10
 gameHeight = 20
 
+createState :: Grid -> Int -> Maybe Piece -> Pos -> State
+createState board p ap pos =
+	State {grid=board, points=p, activePiece=ap, position=pos}
 
 newState :: State
 newState = 

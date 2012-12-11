@@ -18,7 +18,19 @@ tick' :: Grid -> [[Maybe Int]] -> Pos -> State -> IO State
 tick' board piece (x,y) state = do
 	if State.canPlace board piece (x,(y+1))
 		then return $ State.move state 0 1
-		else return state --todo new piece, merge piece with grid
+		else return $ pieceDone board 0 piece (x,y) state
+
+--new piece, merge piece with grid
+pieceDone :: Grid -> Int -> [[Maybe Int]] -> Pos -> State -> State
+pieceDone g points ap pos state =
+	createState newg points (activePiece state) pos
+	where 
+		(newpoints, newnewg) = rowReduce newg
+		newg = addPieceToGrid ap g --Kalev add the merg thing here
+
+addPieceToGrid ap g = g
+
+rowReduce g = (1, g)
 
 -- FIXME: this state keeping is messed up
 keyPress :: String -> State -> IO State
