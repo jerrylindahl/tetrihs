@@ -12,6 +12,7 @@ import Game as Game
 import Piece
 import State as State
 import Debug.Trace
+import System.Random
 
 blockSize = 40
 canvasWidth = 300
@@ -25,7 +26,12 @@ main = do
     canvas <- drawingAreaNew
     canvas `on` sizeRequest $ return (Requisition canvasWidth canvasHeight)
 
-    stateRef <- newIORef State.newState
+    seed <- newStdGen
+    piecesRef <- newIORef $ randomPieces seed
+    pieces <- readIORef piecesRef
+
+    stateRef <- newIORef $ State.newState (Just $ head pieces)
+    writeIORef piecesRef $ tail pieces
 
     let handleKeyPress key = do
         state <- readIORef stateRef
@@ -36,9 +42,19 @@ main = do
     let gameLoop = do
         state <- readIORef stateRef
         newState <- tick state
+
+        case activePiece newState of
+            Nothing -> do
+                pieces <- readIORef piecesRef
+                writeIORef stateRef $ State.setPiece newState (head pieces) (4,0)
+                writeIORef piecesRef $ tail pieces
+                return ()
+            _           -> do
+                writeIORef stateRef newState
+                return ()
+
         State.printState newState
         widgetQueueDraw canvas -- FIXME: should invalidate only the part of the canvas that has changed
-        writeIORef stateRef newState
 
     canvas `on` exposeEvent $ do
         drawWin <- eventWindow
@@ -98,7 +114,7 @@ pieceDone :: Grid -> Int -> Piece -> Pos -> State
 pieceDone g points ap (x,y)
     | y == 0    = error "End of game" -- End of the game, crash for now
     | otherwise =
-        createState (makeGrid newnewg) (points+newpoints) (Just randomPiece) (4,0)
+        createState (makeGrid newnewg) (points+newpoints) Nothing (4,0)
         where
             (newpoints, newnewg) = rowReduce (rows newg)
             newg = addPieceToGrid ap g (x,y)

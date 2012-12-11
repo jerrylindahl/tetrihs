@@ -26,9 +26,9 @@ createState board p ap pos =
 makeGrid :: [[Maybe Int]] -> Grid
 makeGrid g = (Grid g)
 
-newState :: State
-newState = 
-    State {grid=emptyGrid, points=0, activePiece=(Just randomPiece), position=(4,0)}
+newState :: Maybe Piece -> State
+newState ap =
+    State {grid=emptyGrid, points=0, activePiece=ap, position=(4,0)}
 
 getPiece :: State -> Maybe Piece
 getPiece (State grid points piece pos) = piece

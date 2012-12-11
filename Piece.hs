@@ -1,6 +1,7 @@
-module Piece (Piece, piecee, randomPiece, rotateCW, rotatePieceCW, getCoords) where
+module Piece (Piece, piecee, randomPieces, rotateCW, rotatePieceCW, getCoords) where
 
 import Data.List(transpose)
+import System.Random
 
 data Piece = Piece {piecee :: [[Maybe Int]]}
     deriving (Show, Eq)
@@ -8,10 +9,9 @@ data Piece = Piece {piecee :: [[Maybe Int]]}
 type Pos = (Int,Int)
 
 
--- Choose a random piece
--- FIXME: currently not very random
-randomPiece :: Piece
-randomPiece = pieceJ
+-- Generate an infinite list of random pieces
+randomPieces :: StdGen -> [Piece]
+randomPieces gen = map (pieces !!) $ randomRs (0, length pieces - 1) gen
 
 -- Rotate 90° to the right
 rotateCW :: [[a]] -> [[a]]
@@ -27,6 +27,7 @@ prop_rotatePieceCW p = p == (rotatePieceCW $ rotatePieceCW $ rotatePieceCW $ rot
 getCoords :: Piece -> [Pos]
 getCoords (Piece p) = [ (x,y) | (y,r) <- zip [0..] p, (x,n) <- zip [0..] r, n /= Nothing ]
 
+pieces = [pieceI, pieceJ, pieceL, pieceO, pieceS, pieceT, pieceZ]
 
 pieceI :: Piece
 pieceI =
