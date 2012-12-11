@@ -1,6 +1,7 @@
 module State (State, Grid, Pos, newRows, points, createState, rows, makeGrid, grid, canPlace, activePiece, addPieceToGrid, position, newState, emptyGrid, printState, getPiece, setPiece, move,  getGridCoords) where
 
 
+import Data.Maybe(fromJust)
 import Piece
 import Debug.Trace
 
@@ -10,7 +11,7 @@ data State = State {grid :: Grid
                    , position :: Pos
                    } deriving (Show, Eq)
 
-data Grid = Grid { rows :: [[Maybe Int]] }
+data Grid = Grid { rows :: [[Maybe Colour]] }
  deriving ( Show, Eq )
 
 type Pos = (Int,Int)
@@ -23,7 +24,7 @@ createState :: Grid -> Int -> Maybe Piece -> Pos -> State
 createState board p ap pos =
 	State {grid=board, points=p, activePiece=ap, position=pos}
 
-makeGrid :: [[Maybe Int]] -> Grid
+makeGrid :: [[Maybe Colour]] -> Grid
 makeGrid g = (Grid g)
 
 newState :: Maybe Piece -> State
@@ -42,8 +43,8 @@ move (State grid points activePiece (x,y)) dx dy = State grid points activePiece
 
 -- Get coordinates where somethings needs to be drawn
 -- FIXME: copy-paste from Piece.hs
-getGridCoords :: Grid -> [Pos]
-getGridCoords (Grid g) = [ (x,y) | (y,r) <- zip [0..] g, (x,n) <- zip [0..] r, n /= Nothing ]
+getGridCoords :: Grid -> [(Pos, Colour)]
+getGridCoords (Grid g) = [ ((x,y), fromJust n) | (y,r) <- zip [0..] g, (x,n) <- zip [0..] r, n /= Nothing ]
 
 
 --takes a grid and tries to place Piece at Pos, return if it works
@@ -69,7 +70,7 @@ gridEmpty (Grid rows) (x,y) = rows!!x!!y == Nothing
 
 
 addPieceToGrid piece (Grid grid) offset =
-        Grid $ replaceMultipleBlocks grid offset (Just 42) coords
+        Grid $ replaceMultipleBlocks grid offset (Just $ colour piece) coords
         where
                 coords = getCoords piece
 
@@ -93,7 +94,7 @@ emptyGrid :: Grid
 emptyGrid = 
     Grid (replicate gameHeight (replicate gameWidth Nothing))
 
-newRows :: Int -> [[Maybe Int]]
+newRows :: Int -> [[Maybe Colour]]
 newRows n = (replicate n (replicate gameWidth Nothing))
 
 clear = putStr "\ESC[2J"
@@ -107,63 +108,18 @@ printState (State grid points activePiece position) = do
     putStrLn "-----"
     printHelp (rows grid)
 
-printHelp :: [[Maybe Int]] -> IO ()
+printHelp :: [[Maybe Colour]] -> IO ()
 printHelp [] = return ()
 printHelp (x:xs) = do
     printRow x
     printHelp xs
 
-printRow :: [Maybe Int] -> IO ()
+printRow :: [Maybe Colour] -> IO ()
 printRow [] =
     putStr "\n"
 printRow (Just x:xs) = do
-    putStr $ show x
+    putStr "*"
     printRow xs
 printRow (Nothing:xs) = do
     putStr "."
     printRow xs
-
-
---proper width and height
-example :: Grid
-example =
-    Grid
-      [ [Just 9,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
-      , [Just 9,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
-      , [Just 9,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
-      , [Just 9,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
-      , [Just 9,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
-      , [Just 9,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
-      , [Nothing,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Just 3, Nothing, Nothing]
-      , [Nothing,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
-      , [Nothing,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
-      , [Nothing,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
-      , [Just 1,Just 1,Just 1, Just 1,Just 1,Just 1,Just 1,Just 1, Just 1, Just 1]
-      , [Nothing,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
-      , [Nothing,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Just 3]
-      , [Nothing,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
-      , [Nothing,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
-      , [Just 2,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
-      , [Nothing,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
-      , [Nothing,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
-      , [Nothing,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Nothing]
-      , [Just 4,Nothing,Nothing, Nothing,Nothing,Nothing,Nothing,Nothing, Nothing, Just 1]
-      ]
-
-
---actually a sudoku but works for testing purposes :)
-example2 :: Grid
-example2 =
-    Grid
-      [ [Just 3, Just 6, Nothing,Nothing,Just 7, Just 1, Just 2, Nothing,Nothing]
-      , [Nothing,Just 5, Nothing,Nothing,Nothing,Nothing,Just 1, Just 8, Nothing]
-      , [Nothing,Nothing,Just 9, Just 2, Nothing,Just 4, Just 7, Nothing,Nothing]
-      , [Nothing,Nothing,Nothing,Nothing,Just 1, Just 3, Nothing,Just 2, Just 8]
-      , [Just 4, Nothing,Nothing,Just 5, Nothing,Just 2, Nothing,Nothing,Just 9]
-      , [Just 2, Just 7, Nothing,Just 4, Just 6, Nothing,Nothing,Nothing,Nothing]
-      , [Nothing,Nothing,Just 5, Just 3, Nothing,Just 8, Just 9, Nothing,Nothing]
-      , [Nothing,Just 8, Just 3, Nothing,Nothing,Nothing,Nothing,Just 6, Nothing]
-      , [Nothing,Nothing,Just 7, Just 6, Just 9, Nothing,Nothing,Just 4, Just 3]
-      ]
-
-
