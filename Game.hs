@@ -23,7 +23,7 @@ tick' board piece (x,y) state = do
 --new piece, merge piece with grid
 pieceDone :: Grid -> Int -> Piece -> Pos -> State -> State
 pieceDone g points ap pos state =
-	createState newg points (activePiece state) pos
+	createState newg points (Just randomPiece) (0,0)
 	where 
 		(newpoints, newnewg) = rowReduce newg
 		newg = addPieceToGrid ap g pos
