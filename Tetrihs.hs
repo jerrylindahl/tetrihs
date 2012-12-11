@@ -125,7 +125,7 @@ keyPress key state | trace ("keyPress (" ++ show key ++ ", ...)") False = undefi
                    | otherwise = do
     case key of
         "Up"    -> return $ tryRotate state
-        "Down"  -> tick state
+        "Down"  -> return $ tryMove state 0 1
         "Left"  -> return $ tryMove state (-1) 0
         "Right" -> return $ tryMove state 1 0
         "space" -> return $ dropPiece state
