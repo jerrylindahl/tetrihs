@@ -136,7 +136,7 @@ drawGrid grid = do
     save
 
     let coords = getGridCoords grid
-    mapM (drawBlock (0,0,1)) coords
+    mapM (\(pos, col) -> drawBlock (colourRGB col) pos) coords
 
     restore
 

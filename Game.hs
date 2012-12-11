@@ -11,7 +11,7 @@ import Control.Monad.Trans(liftIO)
 
 
 --rowReduce g = rowReduce' g 0 []
-rowReduce :: [[Maybe Int]] -> (Int, [[Maybe Int]])
+rowReduce :: [[Maybe Colour]] -> (Int, [[Maybe Colour]])
 rowReduce g = (length cRows, ((newRows $ length cRows) ++ [g!!r | r<-[0..(length g)-1], r `notElem` cRows]))
 	where cRows = completeRows g
 
@@ -21,10 +21,10 @@ rowReduce g = (length cRows, ((newRows $ length cRows) ++ [g!!r | r<-[0..(length
 --rowReduce' g:gs p ogs = rowReduce' gs ogs:
 
 --Game.completeRows (rows emptyGrid)
-completeRows :: [[Maybe Int]] -> [Int]
+completeRows :: [[Maybe Colour]] -> [Int]
 completeRows g = completeRows' g [] 0
 
-completeRows' :: [[Maybe Int]] -> [Int] -> Int -> [Int]
+completeRows' :: [[Maybe Colour]] -> [Int] -> Int -> [Int]
 completeRows' [] rows i = rows
 completeRows' (g:gs) rows i 
 	| all (isJust) g 	= completeRows' gs (i:rows) (i+1)
