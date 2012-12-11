@@ -1,4 +1,4 @@
-module Piece (Piece, piecee, randomPiece, rotatePieceCW, getCoords) where
+module Piece (Piece, piecee, randomPiece, rotateCW, rotatePieceCW, getCoords) where
 
 import Data.List(transpose)
 

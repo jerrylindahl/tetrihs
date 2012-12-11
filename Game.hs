@@ -25,11 +25,23 @@ keyPress :: String -> State -> IO State
 keyPress key state | trace ("keyPress (" ++ show key ++ ", ...)") False = undefined
                    | otherwise = do
     case key of
-		"Up"    -> return $ State.setPiece state (rotatePieceCW $ fromJust (State.getPiece state)) (State.position state)
+		"Up"    -> return $ tryRotate state
 		"Down"  -> tick state
 		"Left"  -> return $ tryMove state (-1) 0
 		"Right" -> return $ tryMove state 1 0
 		_       -> return state
+
+--copy paste, REFACTOR :)
+tryRotate :: State -> State
+tryRotate state = 
+	if canPlace g (rotateCW p) (State.position state)
+		then State.setPiece state (rotatePieceCW $ fromJust (State.getPiece state)) (State.position state)
+		else state
+	where
+		g = grid state
+		p = piecee $ fromJust (activePiece state)
+		(x,y) = position state
+
 
 
 tryMove :: State -> Int -> Int -> State
